@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1554044052964.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2807353528",
+    "id" : "2B06EA7A",
+    "lastKnownWriteTime" : 1569485049,
+    "last_content_update" : 1569485049,
+    "path" : "~/Documents/Boulot/Ifremer/Ca_se_discute/05:04:19/presentation_variogram/Variogram.Rmd",
+    "project_path" : "Variogram.Rmd",
+    "properties" : {
+        "cursorPosition" : "179,7",
+        "scrollLine" : "167"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

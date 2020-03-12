@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+  <head>
+    <title>Variogrammes</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="A. Boyé" />
+    <link href="assets/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link rel="stylesheet" href="Variogram.css" type="text/css" />
+    <link rel="stylesheet" href="Variogram-fonts.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Variogrammes
+## Ça se discute
+### A. Boyé
+
+---
+
+
+
+
+
+&lt;!--------------&gt;
+
+##### Spatial (or temporal) correlation may be described by &lt;sup&gt;1&lt;/sup&gt;
+
+* **Correlograms**
+
+A correlogram is a graph in which *spatial correlation* values are plotted, on the ordinate, against *distance classes* among sites on the abscissa.
+
+* **Variograms** (semi-variograms)
+
+A variogram is a graph in which *semi-variance* is plotted, on the ordinate, against *distance classes* among sites on the abscissa
+
+* **Periodograms** (structure assumed to consist of *a combination of sine waves*)
+
+Fit sines and cosines of various periods, one period at a time, and determine the proportion of the series’ variance `\((R^2)\)` explained by each period. The abscissa is either a period or its inverse, a frequency; the ordinate is the proportion of variance explained. 
+
+.footnote[
+
+[1] Legendre, P. and Legendre, L. (2012). *Numerical Ecology, 3rd English edition.* Elsevier.
+
+]
+
+---
+
+class: center, middle
+
+## Principle
+
+&lt;img src="images/principe.jpeg" style="display: block; margin: auto;" /&gt;
+
+---
+
+class: center
+
+##### Correlograms
+
+
+&lt;img src="images/formula_correl.jpeg" width="450" style="display: block; margin: auto;" /&gt;
+
+.left[
+
+.pull-left[
+* **Moran’s I**
+
+Moran’s I related to the *Pearson correlation* coefficient. *Usually* takes values between –1 and +1
+
+**Numerator** : *covariance*; 
+
+**Denominator** : maximum-likelihood estimator of the *variance*
+
+]
+
+.pull-right[
+
+* **Geary’s c**
+
+Geary’s c coefficient is a *distance-type* function : varies from 0 to some unspecified value larger than 1.
+
+**Numerator** : sums the squared differences
+
+.alert[Varies as the reverse of a Moran’s I correlogram]
+
+]
+
+]
+
+---
+
+class: center
+
+##### Correlograms
+
+
+&lt;img src="images/formula_correl.jpeg" width="450" style="display: block; margin: auto;" /&gt;
+
+&amp;nbsp;
+
+*Positive spatial correlation : positive values of I.*
+
+*Negative correlation : negative values.*
+
+`\(\Rightarrow\)` **Strong spatial correlation produces high values of I and low values of c**
+
+.alert[Sensitive to extreme values and asymmetry in distribution : normalize data]
+
+---
+
+class: center
+
+##### Absence of auto-correlation : **Moran’s I** = `\(0\)` &amp; **Geary’s c** = `\(1\)`
+
+&lt;img src="images/correl_exemple.jpeg" width="500" style="display: block; margin: auto;" /&gt;&lt;img src="images/correl_exemple_2.jpeg" width="500" style="display: block; margin: auto;" /&gt;
+
+---
+
+class:center, middle
+
+### Correlograms
+
+&lt;img src="images/formula_correl.jpeg" width="500" style="display: block; margin: auto;" /&gt;
+
+&amp;nbsp;
+
+### Semi-variograms
+
+&lt;img src="images/formula_vario.jpeg" width="500" style="display: block; margin: auto;" /&gt;
+
+
+`\(\Rightarrow\)` **Numerator of Geary’s c**
+
+
+---
+
+class: center
+
+### Semi-variograms
+
+&lt;img src="images/variogram.jpeg" width="500" style="display: block; margin: auto;" /&gt;
+
+.left[
+
+* *sill* : variance of the variable
+* *range* :  beyond that distance, the sampling units are not spatially correlated
+* `\(C_0\)` (*nugget effect*) : local variation occurring at scales finer than the sampling interval
+  * ex : sampling error, fine-scale spatial variability, and measurement error
+* `\(C_1\)` : spatially structured component
+]
+
+---
+
+class: center, middle
+
+## Example
+
+&lt;img src="images/vario_exemple.jpeg" style="display: block; margin: auto;" /&gt;
+
+---
+
+class: center, middle
+
+#### Fit models to the sample variogram (kriging)
+
+&lt;img src="images/vario_model.jpeg" style="display: block; margin: auto;" /&gt;
+
+---
+
+class: center
+
+## Computation in R
+
+.left[
+
+### Autocorrelation
+
+
+```r
+
+acf(x, lag.max = NULL, type = c("correlation", "covariance", 
+    "partial"), plot = TRUE, na.action = na.fail...)
+
+```
+
+### Cross-correlation/cross-variogram
+
+
+```r
+
+ccf(x, y, lag.max = NULL, type = c("correlation", "covariance"), 
+    plot = TRUE, na.action = na.fail, ...)
+
+```
+
+]
+
+---
+
+class: center
+
+#### Monthly Deaths from Lung Diseases in the UK, 1974–1979
+
+.pull-left[
+
+```r
+acf(ldeaths, 
+    type = "correlation")
+```
+
+&lt;img src="Variogram_files/figure-html/unnamed-chunk-12-1.png" width="300" style="display: block; margin: auto;" /&gt;
+]
+
+
+.pull-right[
+
+```r
+acf(ldeaths, 
+    type = "covariance")
+```
+
+&lt;img src="Variogram_files/figure-html/unnamed-chunk-13-1.png" width="300" style="display: block; margin: auto;" /&gt;
+]
+
+---
+
+class: center
+
+#### Covariation male/female
+
+.pull-left[
+
+```r
+ccf(mdeaths, fdeaths, 
+    type = "correlation", 
+    ylab="cross-correlation")
+```
+
+&lt;img src="Variogram_files/figure-html/unnamed-chunk-14-1.png" width="300" style="display: block; margin: auto;" /&gt;
+]
+
+.pull-right[
+
+```r
+ccf(mdeaths, fdeaths, 
+    type = "covariance", 
+    ylab="cross-variation")
+```
+
+&lt;img src="Variogram_files/figure-html/unnamed-chunk-15-1.png" width="300" style="display: block; margin: auto;" /&gt;
+]
+
+
+---
+
+## Another example from marine systems &lt;sup&gt;2&lt;/sup&gt;
+
+&lt;img src="images/lessin_2019.jpeg" width="600" style="display: block; margin: auto;" /&gt;
+
+.footnote[
+
+[2] Lessin, G., Bruggeman, J., McNeill, C. L., and Widdicombe, S. (2019). Time scales of benthic macrofaunal response to pelagic production differ between major feeding groups. *Frontiers in Marine Science*, 6:15.
+
+]
+
+
+---
+
+class: center, middle
+
+# Other approaches (MEM)
+
+---
+
+class: center
+
+#### Principle
+
+MEM&lt;sup&gt;3&lt;/sup&gt; (Moran's eigenvector maps): spatial variables representing structures of all relevent scales
+
+*Geographic distances among sites* or *spatial weighting matrix* `\(\Rightarrow\)` **spatial explanatory variables**
+
+&amp;nbsp;
+
+&lt;img src="images/principe_mem.png" width="600" style="display: block; margin: auto;" /&gt;
+
+.footnote[
+
+[3] Dray, S., Legendre, P., and Peres-Neto, P. R. (2006). Spatial modelling: a comprehensive framework for principal coordinate analysis of neighbour matrices (PCNM). Ecological Modelling, 196(3):483 – 493.
+
+]
+
+---
+
+class: center
+
+#### Examples &lt;sup&gt;4&lt;/sup&gt;
+
+&amp;nbsp;
+
+.pull-left[
+&lt;img src="images/MEM_transect.jpeg" height="400px" style="display: block; margin: auto;" /&gt;
+]
+
+.pull-right[
+&lt;img src="images/MEM_2d.jpeg" height="400px" style="display: block; margin: auto;" /&gt;
+]
+
+.footnote[
+
+[4] Borcard, D., Gillet, F., &amp; Legendre, P. (2018). Numerical ecology with R. 2nd edition. Springer.
+
+]
+
+---
+
+class:center, middle
+
+MEM and dbMEM can be computed using [adespatial](https://cran.r-project.org/web/packages/adespatial/vignettes/tutorial.html)
+
+.pull-left[
+.left[
+
+```r
+
+library(adespatial)
+library(adegraphics)
+
+# Generate grid point coordinates
+xygrid2 &lt;- expand.grid(1:5, 1:5)
+
+# Creation of the dbMEM eigenfunctions with non-null Moran's I 
+xygrid2.dbmem.tmp &lt;- 
+  dbmem(xygrid2,MEM.autocor="non-null")
+
+xygrid2.dbmem &lt;- 
+  as.data.frame(xygrid2.dbmem.tmp)
+
+# Plot some dbMEM variables using s.value {adegraphics} 
+somedbmem2 &lt;- c(1:20) 
+s.value(xygrid2, 
+        xygrid2.dbmem[,somedbmem2],
+  method = "color",
+  symbol = "circle",
+  ppoints.cex = 0.5
+)
+
+```
+]
+]
+
+.pull-right[
+
+```
+# Information: Square regular grid; multiple eigenvalues
+```
+
+&lt;img src="Variogram_files/figure-html/mem_ex-out-1.png" width="550" style="display: block; margin: auto;" /&gt;
+]
+
+
+---
+
+class:center, middle
+
+### Analyse de codépendance
+
+&lt;img src="images/guenard_2010.jpeg" style="display: block; margin: auto;" /&gt;
+
+---
+
+class:center, middle
+
+### Analyse de codépendance
+
+.pull-left[
+&lt;img src="images/guenard_raw.jpeg" height="400px" style="display: block; margin: auto;" /&gt;
+]
+
+.pull-right[
+&lt;img src="images/guenard_model.jpeg" height="400px" style="display: block; margin: auto;" /&gt;
+]
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();</script>
+
+<script>
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
